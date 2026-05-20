@@ -7,11 +7,10 @@
 ## Возможности
 
 - Парсинг файлов .evtx (Security, System, Sysmon, PowerShell)
-- 39 правил детекции подозрительной активности (17 для Security/System + 9 для Sysmon)
+- 45 правил детекции подозрительной активности (30 для Security/System + 15 для Sysmon)
 - 4 паттерна корреляции событий (брутфорс, эскалация привилегий, разведка, заметание следов)
 - Генерация HTML-отчёта с визуализацией:
   - круговая диаграмма распределения по категориям
-  - таймлайн активности
   - фильтрация и поиск по срабатываниям
   - автоматическое заключение эксперта с оценкой уровня риска
 - Экспорт в CSV для дальнейшего анализа
@@ -32,7 +31,7 @@
 ## Установка
 
 ```bash
-git clone https://github.com/username/CatWatch.git
+git clone https://github.com/winterblooom/CatWatch.git
 cd CatWatch
 python -m venv .venv
 .venv\Scripts\activate
@@ -74,7 +73,7 @@ wevtutil epl System System.evtx
 CatWatch/
 ├── main.py                  — точка входа, CLI-интерфейс
 ├── parser.py                — парсинг .evtx файлов
-├── rules.py                 — правила детекции (39 правил)
+├── rules.py                 — правила детекции (45 правил)
 ├── correlator.py            — корреляция событий
 ├── reporter.py              — генерация HTML/CSV отчётов
 ├── generate_test_data.py    — генератор тестового сценария атаки
