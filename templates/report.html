@@ -26,7 +26,7 @@
         .hero h1 { font-size: 36px; font-weight: 700; letter-spacing: 8px; }
         .hero .sub { color: #F5E9E2aa; font-size: 14px; margin-top: 8px; }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
 
         .stats-bar {
             display: flex;
@@ -35,7 +35,7 @@
             margin: -20px auto 32px;
             position: relative;
             z-index: 1;
-            max-width: 900px;
+            max-width: 960px;
             border-radius: 12px;
             overflow: hidden;
             border: 1px solid #773344;
@@ -90,45 +90,45 @@
         .sev-medium { background: linear-gradient(90deg, #ca8a04, #ca8a0488); color: #160029; }
         .sev-low { background: linear-gradient(90deg, #9f7aea, #9f7aea88); color: #fff; }
         .incident-body { padding: 16px 20px; }
-        .incident-body h3 { font-size: 15px; margin-bottom: 6px; }
-        .incident-body p { color: #E3B5A4; font-size: 13px; line-height: 1.5; }
+        .incident-body h3 { font-size: 15px; margin-bottom: 6px; color: #F5E9E2; }
+        .incident-body p { color: #ddd0c8; font-size: 14px; line-height: 1.5; }
         .incident-meta { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
         .incident-meta span {
             background: #77334433;
             padding: 4px 10px;
             border-radius: 6px;
-            font-size: 11px;
-            color: #E3B5A4;
+            font-size: 12px;
+            color: #F5E9E2;
         }
 
-        .timeline-bar { display: flex; align-items: end; gap: 3px; height: 200px; padding: 10px 0; }
-        .timeline-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .timeline-bar-inner { width: 100%; max-width: 40px; border-radius: 4px 4px 0 0; min-height: 8px; }
-        .timeline-label {
-            font-size: 10px;
-            color: #773344;
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            max-height: 60px;
-            overflow: hidden;
-        }
+
 
         .table-card {
             background: #160029;
             border: 1px solid #773344;
             border-radius: 12px;
-            overflow: hidden;
+            overflow-x: auto;
         }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
         th {
             background: linear-gradient(90deg, #773344, #77334488);
             color: #F5E9E2;
-            padding: 12px 14px;
+            padding: 12px 16px;
             text-align: left;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            user-select: none;
         }
-        td { padding: 12px 14px; border-bottom: 1px solid #77334422; color: #E3B5A4; }
-        tr:hover { background: #77334411; }
+        th:hover { background: linear-gradient(90deg, #8a3d52, #8a3d5288); }
+        th .sort-arrow { margin-left: 4px; font-size: 10px; opacity: 0.4; }
+        th.sorted-asc .sort-arrow, th.sorted-desc .sort-arrow { opacity: 1; }
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #77334422;
+            color: #F5E9E2;
+        }
+        tr:hover { background: #77334418; }
 
         .badge {
             display: inline-block;
@@ -138,14 +138,43 @@
             font-weight: 600;
             text-transform: uppercase;
         }
-        .badge-critical { background: #D44D5C22; color: #D44D5C; }
-        .badge-high { background: #E3B5A422; color: #E3B5A4; }
-        .badge-medium { background: #ca8a0422; color: #fde047; }
-        .badge-low { background: #9f7aea22; color: #9f7aea; }
-        .badge-info { background: #77334422; color: #773344; }
+        .badge-critical { background: #D44D5C33; color: #ff6b7a; }
+        .badge-high { background: #E3B5A433; color: #f0cfc0; }
+        .badge-medium { background: #ca8a0433; color: #fde047; }
+        .badge-low { background: #9f7aea33; color: #c4a5f7; }
+        .badge-info { background: #77334433; color: #997788; }
 
-        .details-cell { max-width: 350px; word-wrap: break-word; overflow-wrap: break-word; font-size: 11px; line-height: 1.4; }
-        .empty-state { text-align: center; padding: 40px; color: #773344; }
+        .rule-name { color: #c9a0aa; font-size: 12px; }
+
+        .details-cell {
+            max-width: 500px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.5;
+        }
+        .details-preview {
+            color: #ddd0c8;
+        }
+        .details-full {
+            display: none;
+            color: #ddd0c8;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid #77334433;
+        }
+        .details-toggle {
+            color: #D44D5C;
+            cursor: pointer;
+            font-size: 12px;
+            border: none;
+            background: none;
+            padding: 2px 0;
+            margin-top: 4px;
+            display: inline-block;
+        }
+        .details-toggle:hover { color: #ff6b7a; text-decoration: underline; }
+
+        .empty-state { text-align: center; padding: 40px; color: #997788; }
         .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
 
         /* Поиск */
@@ -154,20 +183,22 @@
             gap: 8px;
             margin-bottom: 16px;
             align-items: center;
+            flex-wrap: wrap;
         }
         .search-input {
             flex: 1;
+            min-width: 250px;
             padding: 10px 16px;
             border-radius: 8px;
             border: 1px solid #773344;
             background: #160029;
             color: #F5E9E2;
-            font-size: 13px;
+            font-size: 14px;
             outline: none;
             transition: border-color 0.2s;
         }
         .search-input:focus { border-color: #D44D5C; }
-        .search-input::placeholder { color: #77334488; }
+        .search-input::placeholder { color: #997788; }
         .filter-btn {
             padding: 10px 16px;
             border-radius: 8px;
@@ -183,8 +214,8 @@
             color: #F5E9E2;
         }
         .search-stats {
-            font-size: 12px;
-            color: #773344;
+            font-size: 13px;
+            color: #997788;
             margin-bottom: 8px;
         }
 
@@ -203,7 +234,7 @@
             border-bottom: 1px solid #77334444;
         }
         .conclusion-text {
-            color: #E3B5A4;
+            color: #ddd0c8;
             font-size: 14px;
             line-height: 1.8;
         }
@@ -218,25 +249,25 @@
             letter-spacing: 1px;
             margin: 8px 0 16px 0;
         }
-        .risk-critical { background: #D44D5C33; color: #D44D5C; border: 1px solid #D44D5C; }
-        .risk-high { background: #E3B5A433; color: #E3B5A4; border: 1px solid #E3B5A4; }
+        .risk-critical { background: #D44D5C33; color: #ff6b7a; border: 1px solid #D44D5C; }
+        .risk-high { background: #E3B5A433; color: #f0cfc0; border: 1px solid #E3B5A4; }
         .risk-medium { background: #ca8a0433; color: #fde047; border: 1px solid #ca8a04; }
-        .risk-low { background: #9f7aea33; color: #9f7aea; border: 1px solid #9f7aea; }
-        .risk-none { background: #22c55e33; color: #22c55e; border: 1px solid #22c55e; }
+        .risk-low { background: #9f7aea33; color: #c4a5f7; border: 1px solid #9f7aea; }
+        .risk-none { background: #22c55e33; color: #4ade80; border: 1px solid #22c55e; }
         .recommendation {
             background: #77334422;
             border-left: 3px solid #D44D5C;
             padding: 12px 16px;
             border-radius: 0 8px 8px 0;
             margin: 8px 0;
-            font-size: 13px;
-            color: #E3B5A4;
+            font-size: 14px;
+            color: #ddd0c8;
         }
 
         .footer {
             text-align: center;
-            color: #773344;
-            font-size: 11px;
+            color: #997788;
+            font-size: 12px;
             padding: 32px;
             margin-top: 20px;
             border-top: 1px solid #77334422;
@@ -285,14 +316,14 @@
                         {% endfor %}
                         <circle cx="0" cy="0" r="58" fill="#0d0015" />
                         <text x="0" y="-6" text-anchor="middle" fill="#F5E9E2" font-size="28" font-weight="700">{{ total }}</text>
-                        <text x="0" y="14" text-anchor="middle" fill="#773344" font-size="10">ВСЕГО</text>
+                        <text x="0" y="14" text-anchor="middle" fill="#997788" font-size="10">ВСЕГО</text>
                     </svg>
                 </div>
-                <div style="display: flex; flex-wrap: wrap; gap: 8px; flex: 1;">
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; flex: 1;">
                     {% for cat, count in summary.by_category.items() %}
-                    <div style="display: flex; align-items: center; gap: 8px; min-width: 200px;">
+                    <div style="display: flex; align-items: center; gap: 8px; min-width: 220px;">
                         <div style="width: 12px; height: 12px; border-radius: 3px; background: {{ colors[loop.index0 % 10] }};"></div>
-                        <span style="font-size: 13px; color: #E3B5A4;">{{ cat }}: <strong style="color: #F5E9E2;">{{ count }}</strong></span>
+                        <span style="font-size: 14px; color: #ddd0c8;">{{ cat }}: <strong style="color: #F5E9E2;">{{ count }}</strong></span>
                     </div>
                     {% endfor %}
                 </div>
@@ -300,20 +331,7 @@
         </div>
         {% endif %}
 
-        {% if timeline %}
-        <div class="section">
-            <div class="section-header"><h2>Таймлайн активности</h2></div>
-            <div class="timeline-bar">
-                {% set max_total = timeline|map(attribute='total')|max %}
-                {% for hour in timeline %}
-                <div class="timeline-col">
-                    <div class="timeline-bar-inner" style="height: {{ [(hour.total / max_total * 100) | int, 5] | max }}%; background: {% if hour.critical > 0 %}#D44D5C{% elif hour.high > 0 %}#E3B5A4{% elif hour.medium > 0 %}#ca8a04{% else %}#9f7aea{% endif %};"></div>
-                    <div class="timeline-label">{{ hour.hour[5:] }}</div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
+
 
         <div class="section">
             <div class="section-header">
@@ -355,8 +373,8 @@
                     <p>Подозрительной активности не обнаружено. Система находится в нормальном состоянии.</p>
                 {% elif summary.critical_count > 0 %}
                     <div class="risk-indicator risk-critical">РИСК: КРИТИЧЕСКИЙ</div>
-                    <p>Обнаружено <strong style="color:#D44D5C">{{ summary.critical_count }}</strong> критических
-                    и <strong style="color:#E3B5A4">{{ summary.high_count }}</strong> высоких срабатываний.
+                    <p>Обнаружено <strong style="color:#ff6b7a">{{ summary.critical_count }}</strong> критических
+                    и <strong style="color:#f0cfc0">{{ summary.high_count }}</strong> высоких срабатываний.
                     {% if summary.total_correlated > 0 %}
                     Корреляционный анализ выявил <strong style="color:#F5E9E2">{{ summary.total_correlated }}</strong> связанных инцидентов,
                     что указывает на целенаправленную атаку.
@@ -365,7 +383,7 @@
                     <div class="recommendation">Рекомендация: немедленно изолировать скомпрометированную систему от сети, провести полное расследование инцидента, сменить все учётные данные.</div>
                 {% elif summary.high_count > 0 %}
                     <div class="risk-indicator risk-high">РИСК: ВЫСОКИЙ</div>
-                    <p>Обнаружено <strong style="color:#E3B5A4">{{ summary.high_count }}</strong> срабатываний высокого уровня.
+                    <p>Обнаружено <strong style="color:#f0cfc0">{{ summary.high_count }}</strong> срабатываний высокого уровня.
                     {% if summary.total_correlated > 0 %}
                     Выявлено <strong style="color:#F5E9E2">{{ summary.total_correlated }}</strong> коррелированных инцидентов.
                     {% endif %}
@@ -390,7 +408,7 @@
                 {% endfor %}.</p>
                 {% endif %}
 
-                <p style="margin-top: 16px; color: #773344; font-size: 12px;">
+                <p style="margin-top: 16px; color: #997788; font-size: 12px;">
                     Данный отчёт сформирован автоматически инструментом CatWatch.
                     Результаты анализа носят рекомендательный характер и требуют верификации специалистом по информационной безопасности.
                 </p>
@@ -412,21 +430,37 @@
                 <button class="filter-btn" onclick="filterSeverity('low')" id="btn-low">Low</button>
             </div>
             <div class="search-stats" id="searchStats"></div>
-            <div class="table-card" style="overflow-x: auto;">
-                <table id="alertsTable" style="min-width: 1000px;">
+            <div class="table-card">
+                <table id="alertsTable">
                     <thead>
-                        <tr><th>Время</th><th>Правило</th><th>Event ID</th><th>Критичность</th><th>Категория</th><th>Компьютер</th><th>Детали</th></tr>
+                        <tr>
+                            <th onclick="sortTable(0)">Время <span class="sort-arrow">&#x25B2;&#x25BC;</span></th>
+                            <th onclick="sortTable(1)">Правило <span class="sort-arrow">&#x25B2;&#x25BC;</span></th>
+                            <th onclick="sortTable(2)">Event ID <span class="sort-arrow">&#x25B2;&#x25BC;</span></th>
+                            <th onclick="sortTable(3)">Критичность <span class="sort-arrow">&#x25B2;&#x25BC;</span></th>
+                            <th onclick="sortTable(4)">Категория <span class="sort-arrow">&#x25B2;&#x25BC;</span></th>
+                            <th onclick="sortTable(5)">Компьютер <span class="sort-arrow">&#x25B2;&#x25BC;</span></th>
+                            <th>Детали</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {% for alert in alerts %}
                         <tr data-severity="{{ alert.severity }}">
-                            <td style="white-space:nowrap;color:#F5E9E2">{{ alert.timestamp | format_time }}</td>
-                            <td><strong style="color:#F5E9E2">{{ alert.rule_id }}</strong><br><span style="color:#773344">{{ alert.name }}</span></td>
-                            <td style="color:#F5E9E2">{{ alert.event_id }}</td>
+                            <td style="white-space:nowrap">{{ alert.timestamp | format_time }}</td>
+                            <td><strong>{{ alert.rule_id }}</strong><br><span class="rule-name">{{ alert.name }}</span></td>
+                            <td>{{ alert.event_id }}</td>
                             <td><span class="badge badge-{{ alert.severity }}">{{ alert.severity }}</span></td>
                             <td>{{ alert.category }}</td>
                             <td>{{ alert.computer }}</td>
-                            <td class="details-cell">{{ alert.details }}</td>
+                            <td class="details-cell">
+                                {% if alert.details|length > 150 %}
+                                    <div class="details-preview">{{ alert.details[:150] }}...</div>
+                                    <div class="details-full">{{ alert.details }}</div>
+                                    <button class="details-toggle" onclick="toggleDetails(this)">Показать полностью</button>
+                                {% else %}
+                                    <div class="details-preview">{{ alert.details }}</div>
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -439,8 +473,6 @@
                 </div>
             {% endif %}
         </div>
-
-
 
         <div class="footer">
             CatWatch — Инструмент анализа журналов событий Windows<br>
@@ -489,6 +521,67 @@
             }
             document.getElementById('btn-' + severity).classList.add('active');
             filterTable();
+        }
+
+        function toggleDetails(btn) {
+            var cell = btn.parentElement;
+            var preview = cell.querySelector('.details-preview');
+            var full = cell.querySelector('.details-full');
+            if (full.style.display === 'block') {
+                full.style.display = 'none';
+                preview.style.display = 'block';
+                btn.textContent = 'Показать полностью';
+            } else {
+                full.style.display = 'block';
+                preview.style.display = 'none';
+                btn.textContent = 'Свернуть';
+            }
+        }
+
+        var sortDirections = {};
+        var severityOrder = {'critical': 0, 'high': 1, 'medium': 2, 'low': 3, 'info': 4};
+
+        function sortTable(colIndex) {
+            var table = document.getElementById('alertsTable');
+            if (!table) return;
+            var tbody = table.getElementsByTagName('tbody')[0];
+            var rows = Array.from(tbody.getElementsByTagName('tr'));
+            var headers = table.getElementsByTagName('th');
+
+            // Определяем направление
+            if (!sortDirections[colIndex]) sortDirections[colIndex] = 'asc';
+            else sortDirections[colIndex] = sortDirections[colIndex] === 'asc' ? 'desc' : 'asc';
+            var dir = sortDirections[colIndex] === 'asc' ? 1 : -1;
+
+            // Убираем классы у всех заголовков
+            for (var i = 0; i < headers.length; i++) {
+                headers[i].classList.remove('sorted-asc', 'sorted-desc');
+            }
+            headers[colIndex].classList.add('sorted-' + sortDirections[colIndex]);
+
+            rows.sort(function(a, b) {
+                var aText = a.cells[colIndex].textContent.trim().toLowerCase();
+                var bText = b.cells[colIndex].textContent.trim().toLowerCase();
+
+                // Сортировка по критичности — особый порядок
+                if (colIndex === 3) {
+                    var aOrder = severityOrder[aText] !== undefined ? severityOrder[aText] : 99;
+                    var bOrder = severityOrder[bText] !== undefined ? severityOrder[bText] : 99;
+                    return (aOrder - bOrder) * dir;
+                }
+
+                // Числовая сортировка для Event ID
+                if (colIndex === 2) {
+                    return (parseInt(aText) - parseInt(bText)) * dir;
+                }
+
+                // Текстовая сортировка
+                if (aText < bText) return -1 * dir;
+                if (aText > bText) return 1 * dir;
+                return 0;
+            });
+
+            rows.forEach(function(row) { tbody.appendChild(row); });
         }
     </script>
 </body>
