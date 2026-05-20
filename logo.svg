@@ -50,7 +50,7 @@
   <text x="307" y="212" font-family="Segoe UI, sans-serif" font-size="11" fill="#D44D5C" text-anchor="middle">Python</text>
   
   <rect x="355" y="195" width="95" height="24" rx="4" fill="#E3B5A433" stroke="#E3B5A4" stroke-width="1"/>
-  <text x="402" y="212" font-family="Segoe UI, sans-serif" font-size="11" fill="#E3B5A4" text-anchor="middle">39 правил</text>
+  <text x="402" y="212" font-family="Segoe UI, sans-serif" font-size="11" fill="#E3B5A4" text-anchor="middle">45 правил</text>
   
   <rect x="460" y="195" width="100" height="24" rx="4" fill="#9f7aea33" stroke="#9f7aea" stroke-width="1"/>
   <text x="510" y="212" font-family="Segoe UI, sans-serif" font-size="11" fill="#9f7aea" text-anchor="middle">Корреляция</text>
