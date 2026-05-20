@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatWatch — Отчёт анализа</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0d0015; color: #F5E9E2; }
+
+        .hero {
+            background: linear-gradient(135deg, #160029 0%, #773344 50%, #D44D5C 100%);
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 60px;
+            background: linear-gradient(transparent, #0d0015);
+        }
+        .hero .cat { font-size: 56px; margin-bottom: 12px; display: block; }
+        .hero h1 { font-size: 36px; font-weight: 700; letter-spacing: 8px; }
+        .hero .sub { color: #F5E9E2aa; font-size: 14px; margin-top: 8px; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin: -20px auto 32px;
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #773344;
+        }
+        .stats-bar .stat {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            background: #160029ee;
+            border-right: 1px solid #77334433;
+        }
+        .stats-bar .stat:last-child { border-right: none; }
+        .stats-bar .num { font-size: 28px; font-weight: 700; display: block; }
+        .stats-bar .lbl { color: #E3B5A4; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; }
+
+        .section { margin-bottom: 28px; }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #77334444;
+        }
+        .section-header h2 { font-size: 18px; font-weight: 500; }
+        .section-header .count {
+            background: #D44D5C;
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .incident-card {
+            background: #160029;
+            border: 1px solid #773344;
+            border-radius: 12px;
+            padding: 0;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        .incident-severity {
+            padding: 3px 16px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .sev-critical { background: linear-gradient(90deg, #D44D5C, #D44D5C88); color: #fff; }
+        .sev-high { background: linear-gradient(90deg, #E3B5A4, #E3B5A488); color: #160029; }
+        .sev-medium { background: linear-gradient(90deg, #ca8a04, #ca8a0488); color: #160029; }
+        .sev-low { background: linear-gradient(90deg, #9f7aea, #9f7aea88); color: #fff; }
+        .incident-body { padding: 16px 20px; }
+        .incident-body h3 { font-size: 15px; margin-bottom: 6px; }
+        .incident-body p { color: #E3B5A4; font-size: 13px; line-height: 1.5; }
+        .incident-meta { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+        .incident-meta span {
+            background: #77334433;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #E3B5A4;
+        }
+
+        .timeline-bar { display: flex; align-items: end; gap: 3px; height: 200px; padding: 10px 0; }
+        .timeline-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .timeline-bar-inner { width: 100%; max-width: 40px; border-radius: 4px 4px 0 0; min-height: 8px; }
+        .timeline-label {
+            font-size: 10px;
+            color: #773344;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            max-height: 60px;
+            overflow: hidden;
+        }
+
+        .table-card {
+            background: #160029;
+            border: 1px solid #773344;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th {
+            background: linear-gradient(90deg, #773344, #77334488);
+            color: #F5E9E2;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 500;
+        }
+        td { padding: 12px 14px; border-bottom: 1px solid #77334422; color: #E3B5A4; }
+        tr:hover { background: #77334411; }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-critical { background: #D44D5C22; color: #D44D5C; }
+        .badge-high { background: #E3B5A422; color: #E3B5A4; }
+        .badge-medium { background: #ca8a0422; color: #fde047; }
+        .badge-low { background: #9f7aea22; color: #9f7aea; }
+        .badge-info { background: #77334422; color: #773344; }
+
+        .details-cell { max-width: 350px; word-wrap: break-word; overflow-wrap: break-word; font-size: 11px; line-height: 1.4; }
+        .empty-state { text-align: center; padding: 40px; color: #773344; }
+        .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+
+        /* Поиск */
+        .search-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .search-input {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid #773344;
+            background: #160029;
+            color: #F5E9E2;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-input:focus { border-color: #D44D5C; }
+        .search-input::placeholder { color: #77334488; }
+        .filter-btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid #773344;
+            background: #160029;
+            color: #E3B5A4;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: #773344;
+            color: #F5E9E2;
+        }
+        .search-stats {
+            font-size: 12px;
+            color: #773344;
+            margin-bottom: 8px;
+        }
+
+        /* Заключение */
+        .conclusion {
+            background: linear-gradient(135deg, #1a0030, #2a0040);
+            border: 1px solid #773344;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 28px;
+        }
+        .conclusion h2 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #77334444;
+        }
+        .conclusion-text {
+            color: #E3B5A4;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .conclusion-text p { margin-bottom: 12px; }
+        .risk-indicator {
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 8px 0 16px 0;
+        }
+        .risk-critical { background: #D44D5C33; color: #D44D5C; border: 1px solid #D44D5C; }
+        .risk-high { background: #E3B5A433; color: #E3B5A4; border: 1px solid #E3B5A4; }
+        .risk-medium { background: #ca8a0433; color: #fde047; border: 1px solid #ca8a04; }
+        .risk-low { background: #9f7aea33; color: #9f7aea; border: 1px solid #9f7aea; }
+        .risk-none { background: #22c55e33; color: #22c55e; border: 1px solid #22c55e; }
+        .recommendation {
+            background: #77334422;
+            border-left: 3px solid #D44D5C;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #E3B5A4;
+        }
+
+        .footer {
+            text-align: center;
+            color: #773344;
+            font-size: 11px;
+            padding: 32px;
+            margin-top: 20px;
+            border-top: 1px solid #77334422;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <span class="cat">&#x1F431;</span>
+        <h1>CATWATCH</h1>
+        <div class="sub">Отчёт анализа журналов событий Windows &#x2022; {{ generated_at }}</div>
+    </div>
+
+    <div class="container">
+
+        <div class="stats-bar">
+            <div class="stat"><span class="num" style="color:#F5E9E2">{{ total_events }}</span><span class="lbl">событий</span></div>
+            <div class="stat"><span class="num" style="color:#D44D5C">{{ summary.total_alerts }}</span><span class="lbl">срабатываний</span></div>
+            <div class="stat"><span class="num" style="color:#D44D5C">{{ summary.critical_count }}</span><span class="lbl">критических</span></div>
+            <div class="stat"><span class="num" style="color:#E3B5A4">{{ summary.high_count }}</span><span class="lbl">высоких</span></div>
+            <div class="stat"><span class="num" style="color:#ca8a04">{{ summary.by_severity.get('medium', 0) }}</span><span class="lbl">средних</span></div>
+            <div class="stat"><span class="num" style="color:#9f7aea">{{ summary.total_correlated }}</span><span class="lbl">инцидентов</span></div>
+        </div>
+
+        {% if summary.by_category %}
+        <div class="section">
+            <div class="section-header">
+                <h2>Распределение по категориям</h2>
+            </div>
+            <div style="display: flex; align-items: center; gap: 32px; flex-wrap: wrap;">
+                <div style="flex-shrink: 0;">
+                    <svg width="220" height="220" viewBox="-110 -110 220 220">
+                        {% set colors = ['#D44D5C', '#E3B5A4', '#773344', '#9f7aea', '#ca8a04', '#6d28d9', '#be185d', '#0891b2', '#65a30d', '#c2410c'] %}
+                        {% set total = summary.by_category.values()|sum %}
+                        {% set ns = namespace(offset=0) %}
+                        {% for cat, count in summary.by_category.items() %}
+                            {% set pct = count / total * 100 %}
+                            {% set dash = pct * 3.14159 * 2 * 80 / 100 %}
+                            {% set gap = 3.14159 * 2 * 80 - dash %}
+                            <circle cx="0" cy="0" r="80" fill="none"
+                                stroke="{{ colors[loop.index0 % 10] }}" stroke-width="36"
+                                stroke-dasharray="{{ dash }} {{ gap }}"
+                                stroke-dashoffset="{{ -ns.offset }}"
+                                transform="rotate(-90)" />
+                            {% set ns.offset = ns.offset + dash %}
+                        {% endfor %}
+                        <circle cx="0" cy="0" r="58" fill="#0d0015" />
+                        <text x="0" y="-6" text-anchor="middle" fill="#F5E9E2" font-size="28" font-weight="700">{{ total }}</text>
+                        <text x="0" y="14" text-anchor="middle" fill="#773344" font-size="10">ВСЕГО</text>
+                    </svg>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; flex: 1;">
+                    {% for cat, count in summary.by_category.items() %}
+                    <div style="display: flex; align-items: center; gap: 8px; min-width: 200px;">
+                        <div style="width: 12px; height: 12px; border-radius: 3px; background: {{ colors[loop.index0 % 10] }};"></div>
+                        <span style="font-size: 13px; color: #E3B5A4;">{{ cat }}: <strong style="color: #F5E9E2;">{{ count }}</strong></span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if timeline %}
+        <div class="section">
+            <div class="section-header"><h2>Таймлайн активности</h2></div>
+            <div class="timeline-bar">
+                {% set max_total = timeline|map(attribute='total')|max %}
+                {% for hour in timeline %}
+                <div class="timeline-col">
+                    <div class="timeline-bar-inner" style="height: {{ [(hour.total / max_total * 100) | int, 5] | max }}%; background: {% if hour.critical > 0 %}#D44D5C{% elif hour.high > 0 %}#E3B5A4{% elif hour.medium > 0 %}#ca8a04{% else %}#9f7aea{% endif %};"></div>
+                    <div class="timeline-label">{{ hour.hour[5:] }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="section">
+            <div class="section-header">
+                <h2>Коррелированные инциденты</h2>
+                <span class="count">{{ correlated|length }}</span>
+            </div>
+            {% if correlated %}
+                {% for inc in correlated %}
+                <div class="incident-card">
+                    <div class="incident-severity sev-{{ inc.severity }}">{{ inc.severity }}</div>
+                    <div class="incident-body">
+                        <h3>{{ inc.name }}</h3>
+                        <p>{{ inc.description }}</p>
+                        <div class="incident-meta">
+                            {% if inc.start_time %}<span>{{ inc.start_time | format_time }} — {{ inc.end_time | format_time }}</span>{% endif %}
+                            {% if inc.source_ip %}<span>{{ inc.source_ip }}</span>{% endif %}
+                            {% if inc.target_account %}<span>{{ inc.target_account }}</span>{% endif %}
+                            <span>{{ inc.event_count }} событий</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon">&#x2705;</div>
+                    <p>Коррелированных инцидентов не обнаружено</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="conclusion">
+            <h2>Предварительное заключение</h2>
+            <div class="conclusion-text">
+                <p>По результатам автоматизированного анализа журналов событий Windows
+                было обработано <strong style="color:#F5E9E2">{{ total_events }}</strong> событий.</p>
+
+                {% if summary.total_alerts == 0 %}
+                    <div class="risk-indicator risk-none">РИСК: ОТСУТСТВУЕТ</div>
+                    <p>Подозрительной активности не обнаружено. Система находится в нормальном состоянии.</p>
+                {% elif summary.critical_count > 0 %}
+                    <div class="risk-indicator risk-critical">РИСК: КРИТИЧЕСКИЙ</div>
+                    <p>Обнаружено <strong style="color:#D44D5C">{{ summary.critical_count }}</strong> критических
+                    и <strong style="color:#E3B5A4">{{ summary.high_count }}</strong> высоких срабатываний.
+                    {% if summary.total_correlated > 0 %}
+                    Корреляционный анализ выявил <strong style="color:#F5E9E2">{{ summary.total_correlated }}</strong> связанных инцидентов,
+                    что указывает на целенаправленную атаку.
+                    {% endif %}
+                    Требуется немедленное реагирование.</p>
+                    <div class="recommendation">Рекомендация: немедленно изолировать скомпрометированную систему от сети, провести полное расследование инцидента, сменить все учётные данные.</div>
+                {% elif summary.high_count > 0 %}
+                    <div class="risk-indicator risk-high">РИСК: ВЫСОКИЙ</div>
+                    <p>Обнаружено <strong style="color:#E3B5A4">{{ summary.high_count }}</strong> срабатываний высокого уровня.
+                    {% if summary.total_correlated > 0 %}
+                    Выявлено <strong style="color:#F5E9E2">{{ summary.total_correlated }}</strong> коррелированных инцидентов.
+                    {% endif %}
+                    Необходима проверка легитимности обнаруженной активности.</p>
+                    <div class="recommendation">Рекомендация: проверить все установленные службы на легитимность, провести аудит учётных записей, усилить мониторинг системы.</div>
+                {% elif summary.by_severity.get('medium', 0) > 0 %}
+                    <div class="risk-indicator risk-medium">РИСК: СРЕДНИЙ</div>
+                    <p>Обнаружено <strong style="color:#fde047">{{ summary.by_severity.get('medium', 0) }}</strong> срабатываний среднего уровня.
+                    Активность может быть легитимной, но требует верификации.</p>
+                    <div class="recommendation">Рекомендация: проверить источники обнаруженной активности, убедиться в легитимности действий пользователей.</div>
+                {% else %}
+                    <div class="risk-indicator risk-low">РИСК: НИЗКИЙ</div>
+                    <p>Обнаружены только информационные и низкоприоритетные срабатывания.
+                    Серьёзных угроз не выявлено.</p>
+                    <div class="recommendation">Рекомендация: продолжить штатный мониторинг, периодически проверять журналы событий.</div>
+                {% endif %}
+
+                {% if summary.by_category %}
+                <p style="margin-top: 16px;">Распределение по категориям угроз:
+                {% for cat, count in summary.by_category.items() %}
+                    {{ cat }} ({{ count }}){% if not loop.last %}, {% endif %}
+                {% endfor %}.</p>
+                {% endif %}
+
+                <p style="margin-top: 16px; color: #773344; font-size: 12px;">
+                    Данный отчёт сформирован автоматически инструментом CatWatch.
+                    Результаты анализа носят рекомендательный характер и требуют верификации специалистом по информационной безопасности.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h2>Все срабатывания</h2>
+                <span class="count">{{ alerts|length }}</span>
+            </div>
+            {% if alerts %}
+            <div class="search-box">
+                <input type="text" class="search-input" id="alertSearch" placeholder="Поиск по правилу, категории, компьютеру, деталям..." oninput="filterTable()">
+                <button class="filter-btn" onclick="filterSeverity('all')" id="btn-all">Все</button>
+                <button class="filter-btn" onclick="filterSeverity('critical')" id="btn-critical">Critical</button>
+                <button class="filter-btn" onclick="filterSeverity('high')" id="btn-high">High</button>
+                <button class="filter-btn" onclick="filterSeverity('medium')" id="btn-medium">Medium</button>
+                <button class="filter-btn" onclick="filterSeverity('low')" id="btn-low">Low</button>
+            </div>
+            <div class="search-stats" id="searchStats"></div>
+            <div class="table-card" style="overflow-x: auto;">
+                <table id="alertsTable" style="min-width: 1000px;">
+                    <thead>
+                        <tr><th>Время</th><th>Правило</th><th>Event ID</th><th>Критичность</th><th>Категория</th><th>Компьютер</th><th>Детали</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for alert in alerts %}
+                        <tr data-severity="{{ alert.severity }}">
+                            <td style="white-space:nowrap;color:#F5E9E2">{{ alert.timestamp | format_time }}</td>
+                            <td><strong style="color:#F5E9E2">{{ alert.rule_id }}</strong><br><span style="color:#773344">{{ alert.name }}</span></td>
+                            <td style="color:#F5E9E2">{{ alert.event_id }}</td>
+                            <td><span class="badge badge-{{ alert.severity }}">{{ alert.severity }}</span></td>
+                            <td>{{ alert.category }}</td>
+                            <td>{{ alert.computer }}</td>
+                            <td class="details-cell">{{ alert.details }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon">&#x2705;</div>
+                    <p>Подозрительных событий не обнаружено</p>
+                </div>
+            {% endif %}
+        </div>
+
+
+
+        <div class="footer">
+            CatWatch — Инструмент анализа журналов событий Windows<br>
+            Курсовая работа по дисциплине «Компьютерная экспертиза» | РТУ МИРЭА
+        </div>
+    </div>
+
+    <script>
+        var currentSeverity = 'all';
+
+        function filterTable() {
+            var search = document.getElementById('alertSearch').value.toLowerCase();
+            var table = document.getElementById('alertsTable');
+            if (!table) return;
+            var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            var visible = 0;
+            var total = rows.length;
+
+            for (var i = 0; i < rows.length; i++) {
+                var text = rows[i].textContent.toLowerCase();
+                var severity = rows[i].getAttribute('data-severity');
+                var matchSearch = search === '' || text.indexOf(search) !== -1;
+                var matchSeverity = currentSeverity === 'all' || severity === currentSeverity;
+
+                if (matchSearch && matchSeverity) {
+                    rows[i].style.display = '';
+                    visible++;
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+
+            var stats = document.getElementById('searchStats');
+            if (search !== '' || currentSeverity !== 'all') {
+                stats.textContent = 'Показано ' + visible + ' из ' + total + ' срабатываний';
+            } else {
+                stats.textContent = '';
+            }
+        }
+
+        function filterSeverity(severity) {
+            currentSeverity = severity;
+            var buttons = document.querySelectorAll('.filter-btn');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+            document.getElementById('btn-' + severity).classList.add('active');
+            filterTable();
+        }
+    </script>
+</body>
+</html>

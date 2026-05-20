@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+test_logs/*.evtx
+*.html
+!templates/report.html
+*.csv
+debug_time.py
+.idea/
