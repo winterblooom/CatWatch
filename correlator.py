@@ -146,9 +146,18 @@ class EventCorrelator:
             parts.append(f"Цель: {target}, Выполнил: {subject}")
 
         elif rule.category == Category.PRIVILEGE_ESCALATION:
-            member = ed.get('MemberName', ed.get('MemberSid', 'N/A'))
-            group = ed.get('TargetUserName', 'N/A')
-            parts.append(f"Пользователь: {member}, Группа: {group}")
+            member = ed.get('MemberName', ed.get('MemberSid', ''))
+            group = ed.get('TargetUserName', '')
+            user = ed.get('SubjectUserName', '')
+            privs: object = ed.get('PrivilegeList', '')
+            if member and group:
+                parts.append(f"Пользователь: {member}, Группа: {group}")
+            elif user:
+                info = f"Пользователь: {user}"
+                if privs:
+                    preview = privs.strip().replace('\n', ', ')[:100]
+                    info += f", Привилегии: {preview}"
+                parts.append(info)
 
 
         elif rule.category == Category.PERSISTENCE:
